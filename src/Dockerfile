@@ -1,13 +1,11 @@
 # Use an official Node.js runtime as the base image
 FROM node:lts-alpine
 
-COPY ./app /app
+COPY ./src /src
 # Install the dependencies
-WORKDIR /app
+WORKDIR /src
 
 RUN npm install
-
-RUN npm install -g http-server
 
 # Expose the port that the HTTP server will use
 EXPOSE 8080
