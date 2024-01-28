@@ -4,11 +4,11 @@ services:
     ports:
       - "4000:4000"
   client:
-    build: /src
+    build: ./src
     ports:
       - "8080:8080"
     env_file:
-      - .env
+      - ./src/.env
   redis:
     image: "redis:alpine"
 
