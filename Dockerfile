@@ -3,7 +3,7 @@ FROM node:lts-alpine
 
 # Set the working directory inside the container
 
-COPY ./app
+COPY . /app
 
 WORKDIR /app
 
