@@ -6,7 +6,7 @@ services:
   client:
     build: ./src
     ports:
-      - "8080:8080"
+      - "8080:3000"
     env_file:
       - ./src/.env
     depends_on:

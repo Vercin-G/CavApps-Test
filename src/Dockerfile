@@ -8,7 +8,7 @@ WORKDIR /src
 RUN npm install
 
 # Expose the port that the HTTP server will use
-EXPOSE 8080
+EXPOSE 3000
 
 # Set the command to run the HTTP server when the container starts
 CMD [ "npm","run","dev" ]
