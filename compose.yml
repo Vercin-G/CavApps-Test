@@ -1,8 +1,14 @@
 services:
-  web:
+  server:
     build: .
     ports:
       - "4000:4000"
+  client:
+    build: /src
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
   redis:
     image: "redis:alpine"
 
