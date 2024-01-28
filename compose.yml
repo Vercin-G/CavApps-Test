@@ -1,6 +1,6 @@
 services:
   server:
-    build: ./src
+    build: ./src/app
     ports:
       - "4000:4000"
   client:

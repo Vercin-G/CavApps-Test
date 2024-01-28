@@ -1,9 +1,9 @@
 # Use an official Node.js runtime as the base image
 FROM node:lts-alpine
 
-COPY . /app
+COPY ./app
 # Install the dependencies
-WORKDIR /app/client
+WORKDIR /app
 
 RUN npm install
 
