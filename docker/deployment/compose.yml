@@ -2,15 +2,15 @@ services:
   server:
     build: ../../
     env_file:
-      - ./src/.env
+      - ../../src/.env
     ports:
       - "4000:4000"
   client:
-    build: ./src/.env
+    build: ../../src
     ports:
       - "8080:3000"
     env_file:
-      - ./src/.env
+      - ../../src/.env
     depends_on:
       - server
   redis:
