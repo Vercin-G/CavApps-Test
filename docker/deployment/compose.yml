@@ -1,12 +1,12 @@
 services:
   server:
-    build: .
+    build: ../../
     env_file:
       - ./src/.env
     ports:
       - "4000:4000"
   client:
-    build: ./src
+    build: ../../src
     ports:
       - "8080:3000"
     env_file:
