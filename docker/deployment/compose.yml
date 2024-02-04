@@ -1,18 +1,27 @@
 services:
   server:
-    build: ../../
+    container_name: adr-server
+    image: node:lts-alpine
     env_file:
       - ../../src/.env
+    volumes:
+      - ../../src /app
     ports:
       - "4000:4000"
+    entrypoint: ../../entrypoint.sh
+    
   client:
-    build: ../../src
+    container_name: adr-client
+    image: node:lts-alpine
+    volumes:
+      - ../../src /app
     ports:
       - "8080:3000"
     env_file:
       - ../../src/.env
     depends_on:
       - server
+    entrypoint: ../../entrypoint.sh
   redis:
     image: "redis:alpine"
 
