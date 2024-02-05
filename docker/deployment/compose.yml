@@ -1,18 +1,35 @@
 services:
   server:
-    build: ../../
+    container_name: adr-server
+    image: node:lts-alpine
     env_file:
       - ../../src/.env
+    volumes:
+      - /CavApps-Test/server:/app
     ports:
       - "4000:4000"
+    working_dir: /app
+    command: /bin/sh -c "apk add curl && npm install && node server.js"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://server:4000"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    
   client:
-    build: ../../src
+    container_name: adr-client
+    image: node:lts-alpine
+    volumes:
+      - /CavApps-Test/src:/app
     ports:
       - "8080:3000"
     env_file:
       - ../../src/.env
     depends_on:
-      - server
+      server:
+        condition: service_healthy
+    command: /bin/sh -c "npm install && npm run build && npm run start"
+    working_dir: /app
   redis:
     image: "redis:alpine"
 

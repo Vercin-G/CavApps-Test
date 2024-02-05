@@ -9,7 +9,6 @@ WORKDIR /app
 
 RUN rm -rf ./src
 
-RUN npm install -g npm
 # Install the dependencies
 RUN npm install
 
