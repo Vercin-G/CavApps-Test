@@ -1,4 +1,4 @@
-<p align="center"><img src="./public/CavAppsLogo.svg" width = 400em></p>
+<p align="center"><img src="./client/public/CavAppsLogo.svg" width = 400em></p>
 
 ## Overview
 
