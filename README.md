@@ -9,6 +9,8 @@
 
 The live deployment can be found at https://apps.7cav.us/ and the backend at https://bff.apps.7cav.us/
 
+**NOTE:** This documentation is written so that an average member of the 7th Cavalry <em>should</em> be able to make basic edits to CavApps. If you need help with a particular matter or believe this documentation could be improved, please message S6 Development Staff on Discord or on the Forums.
+
 ## Table of Contents
 
 - [Running Locally](#running-locally)
@@ -18,6 +20,8 @@ The live deployment can be found at https://apps.7cav.us/ and the backend at htt
 - [Updating the ADR](#updating-the-adr)
   - [Add New Billet in Existing Category](#add-new-billet-in-existing-category)
   - [Add New Category](#add-new-category)
+- [Server Deployment](#server-deployment)
+  - [Requirements](#requirements-1)
 - [Roster Statistics](#roster-statistics)
 - [Future Goals](#future-goals)
 
@@ -29,7 +33,7 @@ In order to run the ADR locally for development, you need the following:
 
 - A valid [7th Cavalry Gaming](https://7cav.us/) account with member-level privileges (i.e. not a public account).
 - [Node.js](https://nodejs.org/en) v16.14+
-- Your choice of IDE such as [VSCode](https://code.visualstudio.com/).
+- Your choice of IDE such as [VSCode](https://code.visualstudio.com/) or [neoVim](https://neovim.io/).
 
 #### Authorization
 
@@ -69,21 +73,21 @@ REACT_APP_CACHE_TIMESTAMP_URL=http://localhost:4000/cache-timestamp
 You should now be ready to run the Server and the Client.
 
 - Open two terminals. On the first terminal navigate to `cavapps/server` and enter the command `node server.js`. You should see that the server is listening on localhost:4000 and can be additionally verified by visiting localhost:4000 on your browser.
-- On the second terminal, navigate to `cavapps/src/app` and run the command `npm run dev`. Once the clientside is running, open your browser and go to http://localhost:3000 . You should see the CavApps index page on your screen.
+- On the second terminal, navigate to `cavapps/client/app` and run the command `npm run dev`. Once the clientside is running, open your browser and go to http://localhost:3000 . You should see the CavApps index page on your screen.
 
-You are now good to go! `cavapps/src/app` is the root folder in which CavApps is operated. Closing the terminals will close the servers. Happy Coding!
+You are now good to go! `cavapps/client/app` is the root folder in which CavApps is operated. Closing the terminals will close the servers. Happy Coding!
 
 For further documentation on NextJS apps, visit https://nextjs.org/docs
 
 ## Updating the ADR
 
-Since the ADR sources its data from the 7th Cavalry API and compares the API against a predefined billet list, the ADR not aware when new billets are created or when older billets are moved.
+Since the ADR sources its data from the 7th Cavalry API and compares the API against a predefined billet list, the ADR is not aware when new billets are created or when older billets are moved.
 
 For example, if a new company in 2-7 is created, the list the ADR compares against needs to be updated in order to display the membership of the new company.
 
 ### Add New Billet in Existing Category
 
-To add a new billet to an existing category, you need to update the `BilletBank.jsx` file located in `cavapps/src/app/reusableModules`.
+To add a new billet to an existing category, you need to update the `BilletBank.jsx` file located in `cavapps/client/app/reusableModules`.
 
 #### Step-by-Step Instructions
 
@@ -111,7 +115,7 @@ const imoCommand = ["5", "9", "28"];
 
 ### Add New Category
 
-To introduce a new category, both `BilletBank.jsx` and `page.jsx` located in `cavapps/src/app/adr/page.jsx` need to be updated.
+To introduce a new category, both `BilletBank.jsx` and `page.jsx` located in `cavapps/client/app/adr/page.jsx` need to be updated.
 
 #### Step-by-Step Instructions
 
@@ -133,7 +137,7 @@ You have been assigned the task of creating an entry in the ADR for 3rd Battalio
 ```jsx
 //3-7
 
-const threeSevenCommand = ['1', '2', '3']
+const threeSevenCommand = ['1', '2', '3'] //placeholder values
 const alpha3 = ['4','5','6']
 const bravo3 = ['7','8','9']
 const charlie3 = ['10','11','12']
@@ -173,7 +177,77 @@ const billetBankObject = {
 
 > Note: Ensure that you add these elements in the proper locations in `page.jsx` to maintain the formatting.
 
+## Server Deployment
+
+**NOTE:** If you are making changes to CavApps and want said changes put on the live version, submit a pull request. This section is intended for S6 Staff for deployment testing purposes.
+
+### Requirements
+
+In order to deploy CavApps on a server, you need the following:
+
+- A linux (preferably ubuntu) based server with the following:
+  - Access via SSH
+  - Sudo level permissions
+  - Minimum 2GB RAM
+- Alongside the following packages:
+
+  - [Docker Engine](https://docs.docker.com/engine/install/ubuntu/)
+  - nodejs
+  - npm
+  - git
+
+  ```
+  sudo apt install git npm nodejs
+  ```
+
+- A 7th Cavalry API token (see [Authorization](#authorization))
+
 ---
+
+### Deployment
+
+Once the required packages are installed, clone the repo
+
+```
+git clone https://github.com/Vercin-G/CavApps-Test
+```
+
+First, install prerequisites:
+
+In `CavApps-Test/server/`:
+
+```
+npm install
+```
+
+In `CavApps-Test/client/`:
+
+```
+npm install
+```
+
+Next, cd into `CavApps-Test/server/credentials` and make the token.js file as described in [Authorization](#authorization).
+
+cd into `CavApps-Test/client` and create a .env file with the contents as shown:
+
+```dotenv
+REACT_APP_CLIENT_TOKEN ="XXXXXX"
+REACT_APP_COMBAT_API_URL=http://server:4000/roster/combat
+REACT_APP_RESERVE_API_URL=http://server:4000/roster/reserves
+REACT_APP_CACHE_TIMESTAMP_URL=http://server:4000/cache-timestamp
+```
+
+**IMPORTANT:** be sure that the urls link to http://server:4000 and **NOT** http://localhost:4000 as you would in a dev setting. If this is not done, docker will not recognize the back and front ends properly.
+
+Return to `CavApps-Test/` and enter:
+
+```
+docker compose up
+```
+
+And you should be good! Simply navigate to your server in your browser and the index page should show. The server side should be accessable via port 4000.
+
+**NOTE:** On slower servers, the generation of nextjs static pages may cause a hang. This is normal. Give it a few seconds.
 
 ## Roster Statistics
 
